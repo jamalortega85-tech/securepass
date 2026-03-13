@@ -1,0 +1,437 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>SecurePass</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f1f3d;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+transition:background 0.4s ease;
+}
+
+.dark{
+background:#081224;
+}
+
+.container{
+background:white;
+padding:35px;
+border-radius:14px;
+box-shadow:0px 10px 30px rgba(0,0,0,0.25);
+width:400px;
+text-align:center;
+transition:all 0.35s ease;
+animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(15px);} 
+to{opacity:1; transform:translateY(0);} 
+}
+
+.dark .container{
+background:#16213f;
+color:white;
+}
+
+.logo{
+font-size:40px;
+margin-bottom:5px;
+animation:pop 0.6s ease;
+}
+
+@keyframes pop{
+0%{transform:scale(0.8);opacity:0}
+100%{transform:scale(1);opacity:1}
+}
+
+h1{
+margin:5px;
+color:#0f1f3d;
+}
+
+.dark h1{
+color:#ffd54f;
+}
+
+.sub{
+font-size:14px;
+color:#555;
+margin-bottom:10px;
+}
+
+.dark .sub{
+color:#ccc;
+}
+
+.aviso{
+font-size:12px;
+color:#666;
+margin-bottom:15px;
+}
+
+.dark .aviso{
+color:#aaa;
+}
+
+input{
+padding:12px;
+width:90%;
+border-radius:8px;
+border:2px solid #ffd54f;
+font-size:15px;
+transition:all 0.25s ease;
+}
+
+input:focus{
+outline:none;
+box-shadow:0 0 6px rgba(255,213,79,0.6);
+transform:scale(1.02);
+}
+
+.dark input{
+background:#0f1f3d;
+color:white;
+}
+
+button{
+margin-top:10px;
+padding:10px 15px;
+border:none;
+border-radius:6px;
+background:#ffd54f;
+color:#0f1f3d;
+font-weight:bold;
+cursor:pointer;
+transition:all 0.25s ease;
+}
+
+button:hover{
+background:#ffca28;
+transform:translateY(-2px);
+}
+
+.barra-container{
+width:100%;
+height:16px;
+background:#eee;
+border-radius:12px;
+margin-top:15px;
+overflow:hidden;
+}
+
+#barra{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#ff3d3d,#ff9800,#4caf50);
+transition:width 0.7s ease;
+}
+
+.nivel{
+font-weight:bold;
+margin-top:10px;
+font-size:18px;
+transition:all 0.3s ease;
+}
+
+.info{
+margin-top:10px;
+white-space:pre-line;
+font-size:14px;
+opacity:0;
+transform:translateY(10px);
+transition:0.35s ease;
+}
+
+.info.mostrar{
+opacity:1;
+transform:translateY(0);
+}
+
+.detalles{
+margin-top:15px;
+font-size:12px;
+color:#444;
+cursor:pointer;
+}
+
+#tecnico{
+display:none;
+margin-top:8px;
+font-size:12px;
+background:#f4f4f4;
+padding:8px;
+border-radius:6px;
+}
+
+.dark #tecnico{
+background:#0f1f3d;
+color:white;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="logo">🔐</div>
+<h1>SecurePass</h1>
+
+<div class="sub">Analizador de seguridad de contraseñas</div>
+
+<div class="aviso">
+Este sitio analiza tu contraseña localmente.<br>
+No se guarda ni se envía a ningún servidor.
+</div>
+
+<input type="password" id="password" placeholder="Escribe tu contraseña" oninput="analizar()">
+<br>
+
+<button onclick="mostrar()">👁 Mostrar</button>
+<button onclick="modoOscuro()">🌙 Modo oscuro</button>
+
+<div class="barra-container">
+<div id="barra"></div>
+</div>
+
+<div id="nivel" class="nivel"></div>
+
+<div id="tiempo" class="info"></div>
+<div id="resultado" class="info"></div>
+<div id="educacion" class="info"></div>
+
+<div class="detalles" onclick="toggleDetalles()">
+⚙ Ver detalles técnicos
+</div>
+
+<div id="tecnico"></div>
+
+</div>
+
+<script>
+
+function mostrar(){
+let campo=document.getElementById("password");
+if(campo.type==="password"){
+campo.type="text";
+}else{
+campo.type="password";
+}
+}
+
+function modoOscuro(){
+document.body.classList.toggle("dark");
+}
+
+function toggleDetalles(){
+let d=document.getElementById("tecnico");
+if(d.style.display==="none"){
+d.style.display="block";
+}else{
+d.style.display="none";
+}
+}
+
+function sugerir(pass){
+let nueva=pass;
+
+nueva=nueva.replace(/a/g,"@");
+nueva=nueva.replace(/e/g,"3");
+nueva=nueva.replace(/i/g,"1");
+nueva=nueva.replace(/o/g,"0");
+nueva=nueva.replace(/s/g,"$");
+
+if(!/[A-Z]/.test(nueva)){
+nueva=nueva.charAt(0).toUpperCase()+nueva.slice(1);
+}
+
+if(!/[0-9]/.test(nueva)){
+nueva=nueva+"7";
+}
+
+if(!/[!@#$%^&*]/.test(nueva)){
+nueva=nueva+"!";
+}
+
+return nueva;
+}
+
+function analizar(){
+
+let pass=document.getElementById("password").value;
+
+let tiempo=document.getElementById("tiempo");
+let resultado=document.getElementById("resultado");
+let educacion=document.getElementById("educacion");
+
+if(pass.length===0){
+
+tiempo.innerText="";
+resultado.innerText="";
+educacion.innerText="";
+
+tiempo.classList.remove("mostrar");
+resultado.classList.remove("mostrar");
+educacion.classList.remove("mostrar");
+
+document.getElementById("nivel").innerText="";
+document.getElementById("barra").style.width="0%";
+
+return;
+}
+
+let passLower=pass.toLowerCase();
+let recomendaciones="";
+let mensajeEducativo="";
+let puntuacion=0;
+
+if(pass.length>=8){puntuacion++;}
+else{
+recomendaciones+="⚠ Haz la contraseña más larga\n";
+mensajeEducativo="Las contraseñas cortas pueden romperse rápidamente con ataques automáticos.";
+}
+
+if(/[A-Z]/.test(pass)){puntuacion++;}
+else{
+recomendaciones+="⚠ Añade mayúsculas\n";
+mensajeEducativo="Combinar mayúsculas y minúsculas aumenta mucho las combinaciones posibles.";
+}
+
+if(/[0-9]/.test(pass)){puntuacion++;}
+else{
+recomendaciones+="⚠ Añade números\n";
+mensajeEducativo="Los números añaden complejidad extra frente a ataques de diccionario.";
+}
+
+if(/[!@#$%^&*]/.test(pass)){puntuacion++;}
+else{
+recomendaciones+="⚠ Añade símbolos\n";
+mensajeEducativo="Los símbolos hacen que la contraseña sea mucho más difícil de adivinar.";
+}
+
+let nombres=["juan","maria","pedro","jose","ana","luis","carlos","sofia","andres","valeria"];
+
+for(let i=0;i<nombres.length;i++){
+if(passLower.includes(nombres[i])){
+recomendaciones+="⚠ Contiene un nombre común\n";
+mensajeEducativo="Los nombres personales son fáciles de adivinar en ataques dirigidos.";
+puntuacion--;
+break;
+}
+}
+
+let yearRegex=/(19\d\d|20\d\d)/;
+
+if(yearRegex.test(pass)){
+recomendaciones+="⚠ Contiene un año o fecha\n";
+mensajeEducativo="Las fechas son de las primeras cosas que prueban los atacantes.";
+puntuacion--;
+}
+
+let filtradas=[
+"123456","123456789","12345678","password","12345","qwerty","1234567",
+"1234567890","111111","qwerty123","abc123","dragon","letmein","admin",
+"iloveyou","football","monkey"
+];
+
+for(let i=0;i<filtradas.length;i++){
+if(passLower===filtradas[i]){
+recomendaciones+="⚠ Esta contraseña aparece en filtraciones de datos\n";
+mensajeEducativo="Las contraseñas filtradas son las primeras que prueban los hackers.";
+puntuacion=0;
+break;
+}
+}
+
+let caracteres=0;
+if(/[a-z]/.test(pass)){caracteres+=26;}
+if(/[A-Z]/.test(pass)){caracteres+=26;}
+if(/[0-9]/.test(pass)){caracteres+=10;}
+if(/[!@#$%^&*]/.test(pass)){caracteres+=8;}
+
+let combinaciones=Math.pow(caracteres,pass.length);
+let intentosPorSegundo=1000000000;
+let segundos=combinaciones/intentosPorSegundo;
+
+let entropia=Math.log2(combinaciones);
+
+let minutos=segundos/60;
+let horas=segundos/3600;
+let dias=segundos/86400;
+let años=segundos/31536000;
+
+let tiempoTexto="";
+
+if(años>=1){
+tiempoTexto=años.toFixed(2)+" años";
+}
+else if(dias>=1){
+tiempoTexto=dias.toFixed(2)+" días";
+}
+else if(horas>=1){
+let h=Math.floor(horas);
+let m=Math.floor((horas-h)*60);
+tiempoTexto=h+" horas y "+m+" minutos";
+}
+else{
+let m=Math.floor(minutos);
+let s=Math.floor((minutos-m)*60);
+tiempoTexto=m+" minutos y "+s+" segundos";
+}
+
+tiempo.innerText="⏱ Tiempo estimado de hackeo: "+tiempoTexto;
+tiempo.classList.add("mostrar");
+
+let barra=document.getElementById("barra");
+
+let maxTiempo=31536000*100;
+let progreso=Math.log10(segundos+1)/Math.log10(maxTiempo);
+if(progreso>1){progreso=1;}
+
+let porcentaje=progreso*100;
+barra.style.width=porcentaje+"%";
+
+let nivel="";
+
+if(porcentaje<33){nivel="🔴 Débil";}
+else if(porcentaje<66){nivel="🟡 Media";}
+else{nivel="🟢 Fuerte";}
+
+
+document.getElementById("nivel").innerText="Nivel de seguridad: "+nivel;
+
+let sugerencia=sugerir(pass);
+
+resultado.innerText=
+recomendaciones+
+"\n💡 Contraseña más segura: "+sugerencia;
+
+resultado.classList.add("mostrar");
+
+if(mensajeEducativo!==""){
+educacion.innerText="ℹ " + mensajeEducativo;
+educacion.classList.add("mostrar");
+}
+
+
+document.getElementById("tecnico").innerText=
+"Entropía: "+entropia.toFixed(2)+" bits\n"+
+"Combinaciones posibles: "+combinaciones.toExponential(2);
+
+}
+
+</script>
+
+</body>
+</html>
