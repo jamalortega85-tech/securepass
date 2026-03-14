@@ -228,18 +228,24 @@ function initDrag(){
 new Sortable(document.getElementById("pending"),{
  group:"tasks",
  animation:150,
+ filter:"button",
+ preventOnFilter:false,
  onEnd:(evt)=>{tasks[evt.item.dataset.index].status="pending";save();renderTasks()}
 })
 
 new Sortable(document.getElementById("progress"),{
  group:"tasks",
  animation:150,
+ filter:"button",
+ preventOnFilter:false,
  onEnd:(evt)=>{tasks[evt.item.dataset.index].status="inprogress";save();renderTasks()}
 })
 
 new Sortable(document.getElementById("done"),{
  group:"tasks",
  animation:150,
+ filter:"button",
+ preventOnFilter:false,
  onEnd:(evt)=>{tasks[evt.item.dataset.index].status="done";save();renderTasks()}
 })
 
@@ -253,6 +259,5 @@ initDrag()
 </script>
 </body>
 </html>
-
 
 
