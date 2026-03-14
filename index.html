@@ -3,41 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OrganizaT - Feria Científica</title>
+<title>OrganizaT - Feria Científica Avanzada</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(to right, #f9f9f9, #c2e9fb);
     margin: 0; padding: 20px;
+    background: linear-gradient(to right, #f9f9f9, #c2e9fb);
+    transition: background 0.3s;
 }
 h1 { text-align: center; color: #222; margin-bottom: 10px; }
 #tutorial { text-align: center; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 #tutorial span { display: block; margin: 5px 0; font-size: 0.9em; color: #555; }
-#task-form, #filters {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-#task-form input, #task-form select, #filters select {
-    padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 0.95em;
-}
-button {
-    padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; font-size: 0.9em;
-}
+#task-form, #filters, #search-sort { display: flex; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+#task-form input, #task-form select, #filters select, #search-sort select, #search-sort input { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 0.95em; }
+button { padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; font-size: 0.9em; }
 button:hover { opacity: 0.8; }
 #board { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
-.column {
-    background: rgba(255,255,255,0.95); padding: 15px; width: 30%; min-width: 260px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
+.column { background: rgba(255,255,255,0.95); padding: 15px; width: 30%; min-width: 260px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
 .column h3 { text-align: center; margin-bottom: 5px; color: #333; }
 .column .count { font-size: 0.8em; color: #666; text-align: center; margin-bottom: 10px; }
-.task-item {
-    background: #fff; padding: 10px; margin-bottom: 10px; border-left: 8px solid #333; display: flex; justify-content: space-between; align-items: center;
-    border-radius: 5px; transition: all 0.3s; position: relative;
-}
+.task-item { background: #fff; padding: 10px; margin-bottom: 10px; border-left: 8px solid #333; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; transition: all 0.3s; position: relative; cursor: grab; }
 .task-item.new-task { transform: scale(0); animation: appear 0.3s forwards; }
 @keyframes appear { to { transform: scale(1); } }
 .priority-high { border-color: #e74c3c; background: #ffe6e6; }
@@ -46,55 +32,50 @@ button:hover { opacity: 0.8; }
 .task-item.today { box-shadow: 0 0 10px #ff4d4d; }
 .task-item span { flex: 1; margin-right: 10px; font-size: 0.9em; }
 .task-item button { margin-left: 3px; font-size: 0.8em; }
-.task-item i { margin-right: 4px; }
+.dark-mode { background: linear-gradient(to right, #222, #555); color: #eee; }
 </style>
 </head>
 <body>
 
 <h1>OrganizaT</h1>
-
 <div id="tutorial">
-    <strong>Mini Tutorial:</strong>
-    <span><i class="fa-solid fa-plus"></i> Agrega una tarea con título, fecha y prioridad.</span>
-    <span><i class="fa-solid fa-arrow-right-arrow-left"></i> Cambia el estado de la tarea entre Pendiente, En Progreso y Completada.</span>
-    <span><i class="fa-solid fa-trash"></i> Elimina tareas que ya no necesites.</span>
-    <span><i class="fa-solid fa-filter"></i> Filtra por prioridad para enfocarte en lo más importante.</span>
-    <span><i class="fa-solid fa-bell"></i> Las tareas de hoy se resaltan y generan recordatorio.</span>
+<strong>Mini Tutorial:</strong>
+<span><i class="fa-solid fa-plus"></i> Agrega tareas con título, fecha, prioridad y descripción.</span>
+<span><i class="fa-solid fa-arrows-left-right"></i> Arrastra tareas para cambiar su estado.</span>
+<span><i class="fa-solid fa-check"></i> Marca tareas completadas.</span>
+<span><i class="fa-solid fa-filter"></i> Filtra por prioridad o busca tareas.</span>
+<span><i class="fa-solid fa-bell"></i> Tareas de hoy se resaltan y notifican.</span>
+<span><i class="fa-solid fa-palette"></i> Cambia tema oscuro/claro.</span>
+<span><i class="fa-solid fa-trophy"></i> Barra de progreso de tareas completadas.</span>
 </div>
 
 <div id="task-form">
     <input type="text" id="task-title" placeholder="Título de la tarea">
     <input type="date" id="task-date">
+    <input type="text" id="task-tags" placeholder="Etiquetas (coma separadas)">
     <select id="task-priority">
         <option value="high">Alta</option>
         <option value="medium">Media</option>
         <option value="low">Baja</option>
     </select>
+    <input type="text" id="task-desc" placeholder="Descripción">
     <button onclick="addTask()"><i class="fa-solid fa-plus"></i> Agregar</button>
 </div>
 
-<div id="filters">
-    <select id="filter-priority" onchange="renderTasks()">
-        <option value="all">Todas Prioridades</option>
-        <option value="high">Alta</option>
-        <option value="medium">Media</option>
-        <option value="low">Baja</option>
+<div id="search-sort">
+    <input type="text" id="search" placeholder="Buscar..." oninput="renderTasks()">
+    <select id="sort" onchange="renderTasks()">
+        <option value="date">Ordenar por fecha</option>
+        <option value="priority">Ordenar por prioridad</option>
+        <option value="title">Ordenar por título</option>
     </select>
+    <button onclick="toggleTheme()"><i class="fa-solid fa-palette"></i> Tema</button>
 </div>
 
 <div id="board">
-    <div class="column" id="pending-column">
-        <h3>Pendientes</h3>
-        <div class="count" id="pending-count"></div>
-    </div>
-    <div class="column" id="inprogress-column">
-        <h3>En Progreso</h3>
-        <div class="count" id="inprogress-count"></div>
-    </div>
-    <div class="column" id="done-column">
-        <h3>Completadas</h3>
-        <div class="count" id="done-count"></div>
-    </div>
+    <div class="column" id="pending-column"><h3>Pendientes</h3><div class="count" id="pending-count"></div></div>
+    <div class="column" id="inprogress-column"><h3>En Progreso</h3><div class="count" id="inprogress-count"></div></div>
+    <div class="column" id="done-column"><h3>Completadas</h3><div class="count" id="done-count"></div></div>
 </div>
 
 <script>
@@ -106,16 +87,18 @@ function addTask() {
     const title = document.getElementById('task-title').value;
     const date = document.getElementById('task-date').value;
     const priority = document.getElementById('task-priority').value;
+    const desc = document.getElementById('task-desc').value;
+    const tags = document.getElementById('task-tags').value.split(',').map(t=>t.trim()).filter(t=>t);
 
     if (!title || !date) { alert('Completa título y fecha'); return; }
 
-    const task = { title, date, priority, status: 'pending' };
+    const task = { title, date, priority, status: 'pending', desc, tags, subtasks: [] };
     tasks.push(task);
-    saveTasks();
-    checkReminder(task);
-    renderTasks();
-    document.getElementById('task-title').value = "";
-    document.getElementById('task-date').value = "";
+    saveTasks(); checkReminder(task); renderTasks();
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-date').value = '';
+    document.getElementById('task-desc').value = '';
+    document.getElementById('task-tags').value = '';
 }
 
 function checkReminder(task) {
@@ -123,20 +106,16 @@ function checkReminder(task) {
     if (task.date === today) alert(`Recordatorio: la tarea "${task.title}" es para hoy`);
 }
 
-function changeStatus(index, status) {
-    tasks[index].status = status;
-    saveTasks();
-    renderTasks();
-}
+function changeStatus(index, status) { tasks[index].status = status; saveTasks(); renderTasks(); }
+function deleteTask(index) { tasks.splice(index,1); saveTasks(); renderTasks(); }
 
-function deleteTask(index) {
-    tasks.splice(index, 1);
-    saveTasks();
-    renderTasks();
-}
+function toggleTheme() { document.body.classList.toggle('dark-mode'); }
 
 function renderTasks() {
     const filterPriority = document.getElementById('filter-priority').value;
+    const searchTerm = document.getElementById('search').value.toLowerCase();
+    const sort = document.getElementById('sort').value;
+
     const pendingCol = document.getElementById('pending-column');
     const inprogressCol = document.getElementById('inprogress-column');
     const doneCol = document.getElementById('done-column');
@@ -148,34 +127,39 @@ function renderTasks() {
     inprogressCol.innerHTML = '<h3>En Progreso</h3><div class="count" id="inprogress-count"></div>';
     doneCol.innerHTML = '<h3>Completadas</h3><div class="count" id="done-count"></div>';
 
-    let counts = { pending: 0, inprogress: 0, done: 0 };
+    let displayTasks = [...tasks];
+
+    if(filterPriority !== 'all') displayTasks = displayTasks.filter(t=>t.priority===filterPriority);
+    if(searchTerm) displayTasks = displayTasks.filter(t=>t.title.toLowerCase().includes(searchTerm) || t.desc.toLowerCase().includes(searchTerm) || t.tags.some(tag=>tag.toLowerCase().includes(searchTerm)));
+
+    if(sort==='date') displayTasks.sort((a,b)=> new Date(a.date)-new Date(b.date));
+    else if(sort==='priority') { const order={high:1,medium:2,low:3}; displayTasks.sort((a,b)=>order[a.priority]-order[b.priority]);}
+    else if(sort==='title') displayTasks.sort((a,b)=>a.title.localeCompare(b.title));
+
     const today = new Date().toISOString().split('T')[0];
+    let counts={pending:0,inprogress:0,done:0};
 
-    tasks.forEach((task, index) => {
-        if (filterPriority !== 'all' && task.priority !== filterPriority) return;
-
-        const div = document.createElement('div');
-        div.className = `task-item priority-${task.priority} new-task`;
-        if (task.date === today && task.status !== 'done') div.classList.add('today');
-
+    displayTasks.forEach((task,index)=>{
+        const div=document.createElement('div');
+        div.className=`task-item priority-${task.priority} new-task`;
+        if(task.date===today && task.status!=='done') div.classList.add('today');
+        let subtasksHtml = '';
+        if(task.subtasks.length) subtasksHtml = '<ul>'+task.subtasks.map(s=>`<li>${s}</li>`).join('')+'</ul>';
         div.innerHTML = `
-            <span>${task.title} - ${task.date} - ${task.priority.toUpperCase()}</span>
-            <div>
-                ${task.status !== 'pending' ? `<button onclick="changeStatus(${index}, 'pending')"><i class="fa-solid fa-arrow-left"></i> Pendiente</button>` : ''}
-                ${task.status !== 'inprogress' ? `<button onclick="changeStatus(${index}, 'inprogress')"><i class="fa-solid fa-arrows-left-right"></i> En Progreso</button>` : ''}
-                ${task.status !== 'done' ? `<button onclick="changeStatus(${index}, 'done')"><i class="fa-solid fa-check"></i> Completada</button>` : ''}
-                <button onclick="deleteTask(${index})"><i class="fa-solid fa-trash"></i></button>
-            </div>
-        `;
-
-        if (task.status === 'pending') { pendingCol.appendChild(div); counts.pending++; }
-        else if (task.status === 'inprogress') { inprogressCol.appendChild(div); counts.inprogress++; }
-        else { doneCol.appendChild(div); counts.done++; }
+        <span>${task.title} - ${task.date} - ${task.priority.toUpperCase()} ${task.tags.length?'- Tags: '+task.tags.join(','):''}<br>${task.desc}${subtasksHtml}</span>
+        <div>
+            ${task.status!=='pending'?`<button onclick="changeStatus(${index},'pending')"><i class='fa-solid fa-arrow-left'></i></button>`:''}
+            ${task.status!=='inprogress'?`<button onclick="changeStatus(${index},'inprogress')"><i class='fa-solid fa-arrows-left-right'></i></button>`:''}
+            ${task.status!=='done'?`<button onclick="changeStatus(${index},'done')"><i class='fa-solid fa-check'></i></button>`:''}
+            <button onclick="deleteTask(${index})"><i class='fa-solid fa-trash'></i></button>
+        </div>`;
+        if(task.status==='pending'){pendingCol.appendChild(div);counts.pending++;}
+        else if(task.status==='inprogress'){inprogressCol.appendChild(div);counts.inprogress++;}
+        else{doneCol.appendChild(div);counts.done++;}
     });
-
-    pendingCount.textContent = `${counts.pending} tareas`;
-    inprogressCount.textContent = `${counts.inprogress} tareas`;
-    doneCount.textContent = `${counts.done} tareas`;
+    pendingCount.textContent=`${counts.pending} tareas`;
+    inprogressCount.textContent=`${counts.inprogress} tareas`;
+    doneCount.textContent=`${counts.done} tareas`;
 }
 
 renderTasks();
