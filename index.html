@@ -14,6 +14,8 @@
 }
 body{font-family:Arial;margin:0;padding:20px;background:var(--fondo);color:#222;transition:.3s}
 header{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px}
+#tutorial-btn{display:block;margin:0 auto 10px auto} 
+.logo{width:34px;height:34px}
 h1{margin:0;color:var(--azul)}
 button{padding:6px 10px;border:none;border-radius:5px;background:var(--azul);color:white;cursor:pointer}
 button:hover{opacity:.85}
@@ -38,14 +40,17 @@ input,select{padding:6px;border-radius:5px;border:1px solid #ccc}
 .dark .task-item{background:#1f2f57}
 .dark button{background:var(--amarillo);color:#000}
 .dark #tutorial-box{background:#162447;color:white}
+.dark #progress-bar{color:#000;font-weight:bold}
+.dark .logo{filter:brightness(0) invert(1);}
 </style>
 </head>
 <body>
 <header>
+<img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" class="logo">
 <h1>OrganizaT</h1>
 </header>
 
-<button onclick="toggleTutorial()">Mostrar / Ocultar tutorial</button>
+<button id="tutorial-btn" onclick="toggleTutorial()">Mostrar / Ocultar tutorial</button>
 
 <div id="tutorial-box" class="hidden">
 <b>Mini tutorial:</b>
@@ -127,13 +132,19 @@ renderTasks()
 
 function deleteTask(i){tasks.splice(i,1);save();renderTasks()}
 
+function moveTask(i,status){
+ tasks[i].status=status
+ save()
+ renderTasks()
+}
+
 function updateProgress(){
 const total=tasks.length
 const done=tasks.filter(t=>t.status==="done").length
 const percent=total?Math.round(done/total*100):0
 const bar=document.getElementById("progress-bar")
 bar.style.width=percent+"%"
-bar.textContent=percent+"%"
+bar.textContent=percent+"% completado"
 }
 
 function showCongrats(){
@@ -183,7 +194,21 @@ div.className="task-item priority-"+task.priority
 div.dataset.index=i
 
 
-div.innerHTML=`<span><b>${task.title}</b><br>${task.date}<br>${task.desc}</span><button onclick="deleteTask(${i})">X</button>`
+const today=new Date();
+const due=new Date(task.date);
+const diff=Math.ceil((due-today)/(1000*60*60*24));
+
+let aviso="";
+if(diff===0){aviso="<br><span style='color:red;font-weight:bold'>⚠ Vence hoy</span>"}
+else if(diff===1){aviso="<br><span style='color:orange;font-weight:bold'>⏰ Vence mañana</span>"}
+
+div.innerHTML=`<span><b>${task.title}</b><br>${task.date}<br>${task.desc}${aviso}</span>
+<div style="display:flex;gap:4px;">
+<button onclick="moveTask(${i},'pending')">P</button>
+<button onclick="moveTask(${i},'inprogress')">→</button>
+<button onclick="moveTask(${i},'done')">✓</button>
+<button onclick="deleteTask(${i})">X</button>
+</div>`
 
 if(task.status==="pending"){pending.appendChild(div);cPending++}
 else if(task.status==="inprogress"){progress.appendChild(div);cProgress++}
@@ -228,3 +253,6 @@ initDrag()
 </script>
 </body>
 </html>
+
+
+
