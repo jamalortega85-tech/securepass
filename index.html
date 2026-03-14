@@ -3,166 +3,356 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OrganizaT - Feria Científica Avanzada</title>
+<title>OrganizaT</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    margin: 0; padding: 20px;
-    background: linear-gradient(to right, #f9f9f9, #c2e9fb);
-    transition: background 0.3s;
+:root{
+--azul:#0b2a5b;
+--azulClaro:#123a7a;
+--amarillo:#f2c94c;
+--amarilloSuave:#fff4cc;
+--fondo:#f4f6fb;
 }
-h1 { text-align: center; color: #222; margin-bottom: 10px; }
-#tutorial { text-align: center; margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-#tutorial span { display: block; margin: 5px 0; font-size: 0.9em; color: #555; }
-#task-form, #filters, #search-sort { display: flex; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-#task-form input, #task-form select, #filters select, #search-sort select, #search-sort input { padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-size: 0.95em; }
-button { padding: 6px 10px; border: none; border-radius: 5px; cursor: pointer; transition: 0.3s; font-size: 0.9em; }
-button:hover { opacity: 0.8; }
-#board { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px; }
-.column { background: rgba(255,255,255,0.95); padding: 15px; width: 30%; min-width: 260px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-.column h3 { text-align: center; margin-bottom: 5px; color: #333; }
-.column .count { font-size: 0.8em; color: #666; text-align: center; margin-bottom: 10px; }
-.task-item { background: #fff; padding: 10px; margin-bottom: 10px; border-left: 8px solid #333; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; transition: all 0.3s; position: relative; cursor: grab; }
-.task-item.new-task { transform: scale(0); animation: appear 0.3s forwards; }
-@keyframes appear { to { transform: scale(1); } }
-.priority-high { border-color: #e74c3c; background: #ffe6e6; }
-.priority-medium { border-color: #f1c40f; background: #fffbe6; }
-.priority-low { border-color: #2ecc71; background: #e6ffe6; }
-.task-item.today { box-shadow: 0 0 10px #ff4d4d; }
-.task-item span { flex: 1; margin-right: 10px; font-size: 0.9em; }
-.task-item button { margin-left: 3px; font-size: 0.8em; }
-.dark-mode { background: linear-gradient(to right, #222, #555); color: #eee; }
+
+body{
+font-family:Arial;
+margin:0;
+padding:20px;
+background:var(--fondo);
+color:#222;
+transition:.3s;
+}
+
+header{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+margin-bottom:15px;
+}
+
+#logo{font-size:30px;color:var(--azul)}
+
+h1{margin:0;color:var(--azul)}
+
+#progress-container{
+max-width:600px;
+margin:10px auto;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+border:2px solid var(--azul);
+}
+
+#progress-bar{
+height:20px;
+width:0;
+background:var(--amarillo);
+text-align:center;
+color:#000;
+font-size:12px;
+font-weight:bold;
+transition:width .4s ease;
+}
+
+#task-form,#search-sort{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:15px;
+}
+
+input,select{
+padding:7px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+button{
+padding:6px 10px;
+cursor:pointer;
+border:none;
+border-radius:5px;
+background:var(--azul);
+color:white;
+}
+
+button:hover{opacity:.85}
+
+#board{
+display:flex;
+gap:20px;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+.column{
+background:white;
+padding:15px;
+border-radius:10px;
+width:280px;
+box-shadow:0 2px 6px rgba(0,0,0,.2);
+min-height:250px;
+border-top:6px solid var(--amarillo);
+transition:.25s;
+}
+
+.column.drag-over{
+transform:scale(1.03);
+box-shadow:0 4px 12px rgba(0,0,0,.35);
+}
+
+.column h3{
+text-align:center;
+color:var(--azul);
+margin-bottom:3px;
+}
+
+.counter{
+text-align:center;
+font-size:13px;
+margin-bottom:10px;
+color:#555;
+}
+
+.task-item{
+background:var(--amarilloSuave);
+padding:8px;
+margin-bottom:8px;
+border-left:6px solid var(--azul);
+border-radius:5px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:grab;
+animation:appear .25s ease;
+}
+
+@keyframes appear{
+from{transform:scale(.9);opacity:.5}
+to{transform:scale(1);opacity:1}
+}
+
+.task-item span{font-size:14px;color:#222}
+
+.priority-high{border-color:#e74c3c}
+.priority-medium{border-color:#f1c40f}
+.priority-low{border-color:#2ecc71}
+
+.dark{background:#0b1a33;color:white}
+
+.dark #logo{color:var(--amarillo)}
+.dark h1{color:var(--amarillo)}
+
+.dark .column{
+background:#162447;
+border-top:6px solid var(--amarillo);
+}
+
+.dark .column h3{color:var(--amarillo)}
+
+.dark .counter{color:#ddd}
+
+.dark .task-item{background:#1f2f57}
+
+.dark .task-item span{color:#fff}
+
+.dark button{background:var(--amarillo);color:#000}
+
 </style>
 </head>
 <body>
 
+<header>
+<div id="logo"><i class="fa-solid fa-list-check"></i></div>
 <h1>OrganizaT</h1>
-<div id="tutorial">
-<strong>Mini Tutorial:</strong>
-<span><i class="fa-solid fa-plus"></i> Agrega tareas con título, fecha, prioridad y descripción.</span>
-<span><i class="fa-solid fa-arrows-left-right"></i> Arrastra tareas para cambiar su estado.</span>
-<span><i class="fa-solid fa-check"></i> Marca tareas completadas.</span>
-<span><i class="fa-solid fa-filter"></i> Filtra por prioridad o busca tareas.</span>
-<span><i class="fa-solid fa-bell"></i> Tareas de hoy se resaltan y notifican.</span>
-<span><i class="fa-solid fa-palette"></i> Cambia tema oscuro/claro.</span>
-<span><i class="fa-solid fa-trophy"></i> Barra de progreso de tareas completadas.</span>
+</header>
+
+<div id="progress-container">
+<div id="progress-bar">0%</div>
 </div>
 
 <div id="task-form">
-    <input type="text" id="task-title" placeholder="Título de la tarea">
-    <input type="date" id="task-date">
-    <input type="text" id="task-tags" placeholder="Etiquetas (coma separadas)">
-    <select id="task-priority">
-        <option value="high">Alta</option>
-        <option value="medium">Media</option>
-        <option value="low">Baja</option>
-    </select>
-    <input type="text" id="task-desc" placeholder="Descripción">
-    <button onclick="addTask()"><i class="fa-solid fa-plus"></i> Agregar</button>
+<input id="task-title" placeholder="Título">
+<input type="date" id="task-date">
+<select id="task-priority">
+<option value="high">Alta</option>
+<option value="medium">Media</option>
+<option value="low">Baja</option>
+</select>
+<input id="task-tags" placeholder="Etiquetas">
+<input id="task-desc" placeholder="Descripción">
+<button onclick="addTask()">Agregar</button>
 </div>
 
 <div id="search-sort">
-    <input type="text" id="search" placeholder="Buscar..." oninput="renderTasks()">
-    <select id="sort" onchange="renderTasks()">
-        <option value="date">Ordenar por fecha</option>
-        <option value="priority">Ordenar por prioridad</option>
-        <option value="title">Ordenar por título</option>
-    </select>
-    <button onclick="toggleTheme()"><i class="fa-solid fa-palette"></i> Tema</button>
+<input id="search" placeholder="Buscar" oninput="renderTasks()">
+<select id="sort" onchange="renderTasks()">
+<option value="date">Fecha</option>
+<option value="priority">Prioridad</option>
+<option value="title">Nombre</option>
+</select>
+<button onclick="toggleTheme()">Modo oscuro / claro</button>
 </div>
 
 <div id="board">
-    <div class="column" id="pending-column"><h3>Pendientes</h3><div class="count" id="pending-count"></div></div>
-    <div class="column" id="inprogress-column"><h3>En Progreso</h3><div class="count" id="inprogress-count"></div></div>
-    <div class="column" id="done-column"><h3>Completadas</h3><div class="count" id="done-count"></div></div>
+<div class="column" id="col-pending" ondrop="drop(event,'pending')" ondragover="allowDrop(event)" ondragenter="highlight(event)" ondragleave="unhighlight(event)">
+<h3>Pendientes</h3>
+<div class="counter" id="count-pending"></div>
+<div id="pending"></div>
+</div>
+
+<div class="column" id="col-progress" ondrop="drop(event,'inprogress')" ondragover="allowDrop(event)" ondragenter="highlight(event)" ondragleave="unhighlight(event)">
+<h3>En progreso</h3>
+<div class="counter" id="count-progress"></div>
+<div id="progress"></div>
+</div>
+
+<div class="column" id="col-done" ondrop="drop(event,'done')" ondragover="allowDrop(event)" ondragenter="highlight(event)" ondragleave="unhighlight(event)">
+<h3>Completadas</h3>
+<div class="counter" id="count-done"></div>
+<div id="done"></div>
+</div>
 </div>
 
 <script>
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasks = JSON.parse(localStorage.getItem("tasks")) || []
 
-function saveTasks() { localStorage.setItem('tasks', JSON.stringify(tasks)); }
+function save(){localStorage.setItem("tasks",JSON.stringify(tasks))}
 
-function addTask() {
-    const title = document.getElementById('task-title').value;
-    const date = document.getElementById('task-date').value;
-    const priority = document.getElementById('task-priority').value;
-    const desc = document.getElementById('task-desc').value;
-    const tags = document.getElementById('task-tags').value.split(',').map(t=>t.trim()).filter(t=>t);
+function addTask(){
+const title=document.getElementById("task-title").value
+const date=document.getElementById("task-date").value
+const priority=document.getElementById("task-priority").value
+const tags=document.getElementById("task-tags").value
+const desc=document.getElementById("task-desc").value
 
-    if (!title || !date) { alert('Completa título y fecha'); return; }
+if(!title||!date){alert("Pon título y fecha");return}
 
-    const task = { title, date, priority, status: 'pending', desc, tags, subtasks: [] };
-    tasks.push(task);
-    saveTasks(); checkReminder(task); renderTasks();
-    document.getElementById('task-title').value = '';
-    document.getElementById('task-date').value = '';
-    document.getElementById('task-desc').value = '';
-    document.getElementById('task-tags').value = '';
+const task={title,date,priority,tags,desc,status:"pending"}
+
+tasks.push(task)
+
+checkToday(task)
+
+save()
+renderTasks()
+
+document.getElementById("task-title").value=""
+document.getElementById("task-date").value=""
+document.getElementById("task-tags").value=""
+document.getElementById("task-desc").value=""
 }
 
-function checkReminder(task) {
-    const today = new Date().toISOString().split('T')[0];
-    if (task.date === today) alert(`Recordatorio: la tarea "${task.title}" es para hoy`);
+function deleteTask(i){
+tasks.splice(i,1)
+save()
+renderTasks()
 }
 
-function changeStatus(index, status) { tasks[index].status = status; saveTasks(); renderTasks(); }
-function deleteTask(index) { tasks.splice(index,1); saveTasks(); renderTasks(); }
+function toggleTheme(){document.body.classList.toggle("dark")}
 
-function toggleTheme() { document.body.classList.toggle('dark-mode'); }
-
-function renderTasks() {
-    const filterPriority = document.getElementById('filter-priority').value;
-    const searchTerm = document.getElementById('search').value.toLowerCase();
-    const sort = document.getElementById('sort').value;
-
-    const pendingCol = document.getElementById('pending-column');
-    const inprogressCol = document.getElementById('inprogress-column');
-    const doneCol = document.getElementById('done-column');
-    const pendingCount = document.getElementById('pending-count');
-    const inprogressCount = document.getElementById('inprogress-count');
-    const doneCount = document.getElementById('done-count');
-
-    pendingCol.innerHTML = '<h3>Pendientes</h3><div class="count" id="pending-count"></div>';
-    inprogressCol.innerHTML = '<h3>En Progreso</h3><div class="count" id="inprogress-count"></div>';
-    doneCol.innerHTML = '<h3>Completadas</h3><div class="count" id="done-count"></div>';
-
-    let displayTasks = [...tasks];
-
-    if(filterPriority !== 'all') displayTasks = displayTasks.filter(t=>t.priority===filterPriority);
-    if(searchTerm) displayTasks = displayTasks.filter(t=>t.title.toLowerCase().includes(searchTerm) || t.desc.toLowerCase().includes(searchTerm) || t.tags.some(tag=>tag.toLowerCase().includes(searchTerm)));
-
-    if(sort==='date') displayTasks.sort((a,b)=> new Date(a.date)-new Date(b.date));
-    else if(sort==='priority') { const order={high:1,medium:2,low:3}; displayTasks.sort((a,b)=>order[a.priority]-order[b.priority]);}
-    else if(sort==='title') displayTasks.sort((a,b)=>a.title.localeCompare(b.title));
-
-    const today = new Date().toISOString().split('T')[0];
-    let counts={pending:0,inprogress:0,done:0};
-
-    displayTasks.forEach((task,index)=>{
-        const div=document.createElement('div');
-        div.className=`task-item priority-${task.priority} new-task`;
-        if(task.date===today && task.status!=='done') div.classList.add('today');
-        let subtasksHtml = '';
-        if(task.subtasks.length) subtasksHtml = '<ul>'+task.subtasks.map(s=>`<li>${s}</li>`).join('')+'</ul>';
-        div.innerHTML = `
-        <span>${task.title} - ${task.date} - ${task.priority.toUpperCase()} ${task.tags.length?'- Tags: '+task.tags.join(','):''}<br>${task.desc}${subtasksHtml}</span>
-        <div>
-            ${task.status!=='pending'?`<button onclick="changeStatus(${index},'pending')"><i class='fa-solid fa-arrow-left'></i></button>`:''}
-            ${task.status!=='inprogress'?`<button onclick="changeStatus(${index},'inprogress')"><i class='fa-solid fa-arrows-left-right'></i></button>`:''}
-            ${task.status!=='done'?`<button onclick="changeStatus(${index},'done')"><i class='fa-solid fa-check'></i></button>`:''}
-            <button onclick="deleteTask(${index})"><i class='fa-solid fa-trash'></i></button>
-        </div>`;
-        if(task.status==='pending'){pendingCol.appendChild(div);counts.pending++;}
-        else if(task.status==='inprogress'){inprogressCol.appendChild(div);counts.inprogress++;}
-        else{doneCol.appendChild(div);counts.done++;}
-    });
-    pendingCount.textContent=`${counts.pending} tareas`;
-    inprogressCount.textContent=`${counts.inprogress} tareas`;
-    doneCount.textContent=`${counts.done} tareas`;
+function updateProgress(){
+const total=tasks.length
+const done=tasks.filter(t=>t.status==="done").length
+const percent=total?Math.round(done/total*100):0
+const bar=document.getElementById("progress-bar")
+bar.style.width=percent+"%"
+bar.textContent=percent+"%"
 }
 
-renderTasks();
+function checkToday(task){
+const today=new Date().toISOString().split("T")[0]
+if(task.date===today){
+setTimeout(()=>{
+alert("Tienes una tarea que vence HOY: "+task.title)
+},500)
+}
+}
+
+function allowDrop(ev){ev.preventDefault()}
+
+function drag(ev,index){ev.dataTransfer.setData("taskIndex",index)}
+
+function highlight(ev){ev.currentTarget.classList.add("drag-over")}
+function unhighlight(ev){ev.currentTarget.classList.remove("drag-over")}
+
+function drop(ev,status){
+ev.preventDefault()
+const index=ev.dataTransfer.getData("taskIndex")
+tasks[index].status=status
+save()
+renderTasks()
+}
+
+function renderTasks(){
+const search=document.getElementById("search").value.toLowerCase()
+const sort=document.getElementById("sort").value
+
+const pending=document.getElementById("pending")
+const progress=document.getElementById("progress")
+const done=document.getElementById("done")
+
+pending.innerHTML=""
+progress.innerHTML=""
+done.innerHTML=""
+
+let arr=[...tasks]
+
+if(search){
+arr=arr.filter(t=>t.title.toLowerCase().includes(search)||t.desc.toLowerCase().includes(search)||t.tags.toLowerCase().includes(search))
+}
+
+if(sort==="date")arr.sort((a,b)=>new Date(a.date)-new Date(b.date))
+
+if(sort==="priority"){
+const o={high:1,medium:2,low:3}
+arr.sort((a,b)=>o[a.priority]-o[b.priority])
+}
+
+if(sort==="title")arr.sort((a,b)=>a.title.localeCompare(b.title))
+
+let cPending=0
+let cProgress=0
+let cDone=0
+
+arr.forEach(task=>{
+const i=tasks.indexOf(task)
+const div=document.createElement("div")
+
+div.className="task-item priority-"+task.priority
+
+div.draggable=true
+
+div.ondragstart=(e)=>drag(e,i)
+
+div.innerHTML=`
+<span>
+<b>${task.title}</b><br>
+${task.date} | ${task.priority}<br>
+${task.desc}
+</span>
+<div>
+<button onclick="deleteTask(${i})">X</button>
+</div>
+`
+
+if(task.status==="pending"){pending.appendChild(div);cPending++}
+else if(task.status==="inprogress"){progress.appendChild(div);cProgress++}
+else{done.appendChild(div);cDone++}
+})
+
+
+document.getElementById("count-pending").textContent=cPending+" tareas"
+document.getElementById("count-progress").textContent=cProgress+" tareas"
+document.getElementById("count-done").textContent=cDone+" tareas"
+
+updateProgress()
+}
+
+renderTasks()
 </script>
+
 </body>
 </html>
