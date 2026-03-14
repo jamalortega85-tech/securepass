@@ -35,6 +35,26 @@ margin-bottom:15px;
 
 h1{margin:0;color:var(--azul)}
 
+/* tutorial */
+#tutorial-box{
+max-width:900px;
+margin:10px auto 20px auto;
+background:#ffffff;
+padding:15px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,.2);
+line-height:1.5;
+}
+
+#tutorial-box.hidden{display:none}
+
+#tutorial-box h3{margin-top:0;color:var(--azul)}
+
+#tutorial-toggle{
+display:block;
+margin:0 auto 10px auto;
+}
+
 #progress-container{
 max-width:600px;
 margin:10px auto;
@@ -145,6 +165,13 @@ to{transform:scale(1);opacity:1}
 .dark #logo{color:var(--amarillo)}
 .dark h1{color:var(--amarillo)}
 
+.dark #tutorial-box{
+background:#162447;
+color:#ffffff;
+}
+
+.dark #tutorial-box h3{color:var(--amarillo)}
+
 .dark .column{
 background:#162447;
 border-top:6px solid var(--amarillo);
@@ -168,6 +195,29 @@ border-top:6px solid var(--amarillo);
 <div id="logo"><i class="fa-solid fa-list-check"></i></div>
 <h1>OrganizaT</h1>
 </header>
+
+<button id="tutorial-toggle" onclick="toggleTutorial()">Mostrar / Ocultar tutorial</button>
+
+<div id="tutorial-box" class="hidden">
+<h3>Cómo usar OrganizaT</h3>
+
+<p><b>Crear tarea:</b> escribe un título, fecha, prioridad, etiquetas o descripción y presiona "Agregar". La tarea aparecerá en la columna de pendientes.</p>
+
+<p><b>Arrastrar tareas:</b> puedes mover una tarea entre columnas arrastrándola con el mouse, igual que en Trello. Así cambias su estado a pendiente, en progreso o completada.</p>
+
+<p><b>Barra de progreso:</b> arriba verás una barra que muestra el porcentaje de tareas completadas.</p>
+
+<p><b>Buscador:</b> el campo de búsqueda permite encontrar tareas por nombre, descripción o etiquetas.</p>
+
+<p><b>Ordenar tareas:</b> puedes ordenar por fecha, prioridad o nombre usando el menú de ordenamiento.</p>
+
+<p><b>Modo oscuro:</b> el botón de modo oscuro cambia el estilo visual para trabajar mejor en ambientes con poca luz.</p>
+
+<p><b>Notificaciones:</b> si una tarea vence hoy, el sistema mostrará una alerta automática.</p>
+
+<p><b>Contador de tareas:</b> cada columna muestra cuántas tareas tiene actualmente.</p>
+
+</div>
 
 <div id="progress-container">
 <div id="progress-bar">0%</div>
@@ -220,6 +270,11 @@ border-top:6px solid var(--amarillo);
 let tasks = JSON.parse(localStorage.getItem("tasks")) || []
 
 function save(){localStorage.setItem("tasks",JSON.stringify(tasks))}
+
+function toggleTutorial(){
+const box=document.getElementById("tutorial-box")
+box.classList.toggle("hidden")
+}
 
 function addTask(){
 const title=document.getElementById("task-title").value
