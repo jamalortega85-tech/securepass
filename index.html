@@ -4,219 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OrganizaT</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
 :root{
 --azul:#0b2a5b;
---azulClaro:#123a7a;
 --amarillo:#f2c94c;
 --amarilloSuave:#fff4cc;
 --fondo:#f4f6fb;
 }
-
-body{
-font-family:Arial;
-margin:0;
-padding:20px;
-background:var(--fondo);
-color:#222;
-transition:.3s;
-}
-
-header{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:12px;
-margin-bottom:15px;
-}
-
-#logo{font-size:30px;color:var(--azul)}
-
+body{font-family:Arial;margin:0;padding:20px;background:var(--fondo);color:#222;transition:.3s}
+header{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px}
 h1{margin:0;color:var(--azul)}
-
-/* tutorial */
-#tutorial-box{
-max-width:900px;
-margin:10px auto 20px auto;
-background:#ffffff;
-padding:15px;
-border-radius:10px;
-box-shadow:0 2px 6px rgba(0,0,0,.2);
-line-height:1.5;
-}
-
-#tutorial-box.hidden{display:none}
-
-#tutorial-box h3{margin-top:0;color:var(--azul)}
-
-#tutorial-toggle{
-display:block;
-margin:0 auto 10px auto;
-}
-
-#progress-container{
-max-width:600px;
-margin:10px auto;
-background:#ddd;
-border-radius:20px;
-overflow:hidden;
-border:2px solid var(--azul);
-}
-
-#progress-bar{
-height:20px;
-width:0;
-background:var(--amarillo);
-text-align:center;
-color:#000;
-font-size:12px;
-font-weight:bold;
-transition:width .4s ease;
-}
-
-#task-form,#search-sort{
-display:flex;
-justify-content:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:15px;
-}
-
-input,select{
-padding:7px;
-border-radius:5px;
-border:1px solid #ccc;
-}
-
-button{
-padding:6px 10px;
-cursor:pointer;
-border:none;
-border-radius:5px;
-background:var(--azul);
-color:white;
-}
-
+button{padding:6px 10px;border:none;border-radius:5px;background:var(--azul);color:white;cursor:pointer}
 button:hover{opacity:.85}
-
-#board{
-display:flex;
-gap:20px;
-justify-content:center;
-flex-wrap:wrap;
-}
-
-.column{
-background:white;
-padding:15px;
-border-radius:10px;
-width:280px;
-box-shadow:0 2px 6px rgba(0,0,0,.2);
-min-height:250px;
-border-top:6px solid var(--amarillo);
-transition:.25s;
-}
-
-.column.drag-over{
-transform:scale(1.03);
-box-shadow:0 4px 12px rgba(0,0,0,.35);
-}
-
-.column h3{
-text-align:center;
-color:var(--azul);
-margin-bottom:3px;
-}
-
-.counter{
-text-align:center;
-font-size:13px;
-margin-bottom:10px;
-color:#555;
-}
-
-.task-item{
-background:var(--amarilloSuave);
-padding:8px;
-margin-bottom:8px;
-border-left:6px solid var(--azul);
-border-radius:5px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-cursor:grab;
-animation:appear .25s ease;
-}
-
-@keyframes appear{
-from{transform:scale(.9);opacity:.5}
-to{transform:scale(1);opacity:1}
-}
-
-.task-item span{font-size:14px;color:#222}
-
+input,select{padding:6px;border-radius:5px;border:1px solid #ccc}
+#tutorial-box{max-width:900px;margin:10px auto 20px auto;background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.hidden{display:none}
+#progress-container{max-width:600px;margin:10px auto;background:#ddd;border-radius:20px;overflow:hidden}
+#progress-bar{height:20px;width:0;background:var(--amarillo);text-align:center;font-size:12px;font-weight:bold}
+#task-form,#search-sort{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:15px}
+#board{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
+.column{background:white;padding:15px;border-radius:10px;width:280px;min-height:250px;box-shadow:0 2px 6px rgba(0,0,0,.2);border-top:6px solid var(--amarillo)}
+.column h3{text-align:center;margin-bottom:3px;color:var(--azul)}
+.counter{text-align:center;font-size:13px;margin-bottom:10px;color:#555}
+.task-item{background:var(--amarilloSuave);padding:8px;margin-bottom:8px;border-left:6px solid var(--azul);border-radius:5px;display:flex;justify-content:space-between;align-items:center;cursor:grab}
 .priority-high{border-color:#e74c3c}
 .priority-medium{border-color:#f1c40f}
 .priority-low{border-color:#2ecc71}
-
 .dark{background:#0b1a33;color:white}
-
-.dark #logo{color:var(--amarillo)}
 .dark h1{color:var(--amarillo)}
-
-.dark #tutorial-box{
-background:#162447;
-color:#ffffff;
-}
-
-.dark #tutorial-box h3{color:var(--amarillo)}
-
-.dark .column{
-background:#162447;
-border-top:6px solid var(--amarillo);
-}
-
+.dark .column{background:#162447}
 .dark .column h3{color:var(--amarillo)}
-
-.dark .counter{color:#ddd}
-
 .dark .task-item{background:#1f2f57}
-
-.dark .task-item span{color:#fff}
-
 .dark button{background:var(--amarillo);color:#000}
-
+.dark #tutorial-box{background:#162447;color:white}
 </style>
 </head>
 <body>
-
 <header>
-<div id="logo"><i class="fa-solid fa-list-check"></i></div>
 <h1>OrganizaT</h1>
 </header>
 
-<button id="tutorial-toggle" onclick="toggleTutorial()">Mostrar / Ocultar tutorial</button>
+<button onclick="toggleTutorial()">Mostrar / Ocultar tutorial</button>
 
 <div id="tutorial-box" class="hidden">
-<h3>Cómo usar OrganizaT</h3>
-
-<p><b>Crear tarea:</b> escribe un título, fecha, prioridad, etiquetas o descripción y presiona "Agregar". La tarea aparecerá en la columna de pendientes.</p>
-
-<p><b>Arrastrar tareas:</b> puedes mover una tarea entre columnas arrastrándola con el mouse, igual que en Trello. Así cambias su estado a pendiente, en progreso o completada.</p>
-
-<p><b>Barra de progreso:</b> arriba verás una barra que muestra el porcentaje de tareas completadas.</p>
-
-<p><b>Buscador:</b> el campo de búsqueda permite encontrar tareas por nombre, descripción o etiquetas.</p>
-
-<p><b>Ordenar tareas:</b> puedes ordenar por fecha, prioridad o nombre usando el menú de ordenamiento.</p>
-
-<p><b>Modo oscuro:</b> el botón de modo oscuro cambia el estilo visual para trabajar mejor en ambientes con poca luz.</p>
-
-<p><b>Notificaciones:</b> si una tarea vence hoy, el sistema mostrará una alerta automática.</p>
-
-<p><b>Contador de tareas:</b> cada columna muestra cuántas tareas tiene actualmente.</p>
-
+<b>Mini tutorial:</b>
+<p>1. Agrega tareas con título y fecha.</p>
+<p>2. Arrastra tareas entre columnas.</p>
+<p>3. Usa búsqueda y ordenamiento.</p>
+<p>4. Observa la barra de progreso.</p>
+<p>5. Cuando todas estén completadas recibirás una felicitación.</p>
 </div>
 
 <div id="progress-container">
@@ -231,7 +68,6 @@ border-top:6px solid var(--amarillo);
 <option value="medium">Media</option>
 <option value="low">Baja</option>
 </select>
-<input id="task-tags" placeholder="Etiquetas">
 <input id="task-desc" placeholder="Descripción">
 <button onclick="addTask()">Agregar</button>
 </div>
@@ -247,19 +83,19 @@ border-top:6px solid var(--amarillo);
 </div>
 
 <div id="board">
-<div class="column" id="col-pending" ondrop="drop(event,'pending')" ondragover="allowDrop(event)" ondragenter="highlight(event)" ondragleave="unhighlight(event)">
+<div class="column">
 <h3>Pendientes</h3>
 <div class="counter" id="count-pending"></div>
 <div id="pending"></div>
 </div>
 
-<div class="column" id="col-progress" ondrop="drop(event,'inprogress')" ondragover="allowDrop(event)" ondragenter="highlight(event)" ondragleave="unhighlight(event)">
+<div class="column">
 <h3>En progreso</h3>
 <div class="counter" id="count-progress"></div>
 <div id="progress"></div>
 </div>
 
-<div class="column" id="col-done" ondrop="drop(event,'done')" ondragover="allowDrop(event)" ondragenter="highlight(event)" ondragleave="unhighlight(event)">
+<div class="column">
 <h3>Completadas</h3>
 <div class="counter" id="count-done"></div>
 <div id="done"></div>
@@ -271,42 +107,25 @@ let tasks = JSON.parse(localStorage.getItem("tasks")) || []
 
 function save(){localStorage.setItem("tasks",JSON.stringify(tasks))}
 
-function toggleTutorial(){
-const box=document.getElementById("tutorial-box")
-box.classList.toggle("hidden")
-}
+function toggleTheme(){document.body.classList.toggle("dark")}
+
+function toggleTutorial(){document.getElementById("tutorial-box").classList.toggle("hidden")}
 
 function addTask(){
 const title=document.getElementById("task-title").value
 const date=document.getElementById("task-date").value
 const priority=document.getElementById("task-priority").value
-const tags=document.getElementById("task-tags").value
 const desc=document.getElementById("task-desc").value
 
 if(!title||!date){alert("Pon título y fecha");return}
 
-const task={title,date,priority,tags,desc,status:"pending"}
+tasks.push({title,date,priority,desc,status:"pending"})
 
-tasks.push(task)
-
-checkToday(task)
-
-save()
-renderTasks()
-
-document.getElementById("task-title").value=""
-document.getElementById("task-date").value=""
-document.getElementById("task-tags").value=""
-document.getElementById("task-desc").value=""
-}
-
-function deleteTask(i){
-tasks.splice(i,1)
 save()
 renderTasks()
 }
 
-function toggleTheme(){document.body.classList.toggle("dark")}
+function deleteTask(i){tasks.splice(i,1);save();renderTasks()}
 
 function updateProgress(){
 const total=tasks.length
@@ -317,34 +136,30 @@ bar.style.width=percent+"%"
 bar.textContent=percent+"%"
 }
 
-function checkToday(task){
-const today=new Date().toISOString().split("T")[0]
-if(task.date===today){
-setTimeout(()=>{
-alert("Tienes una tarea que vence HOY: "+task.title)
-},500)
+function showCongrats(){
+const box=document.createElement("div")
+box.innerHTML="🎉 ¡Felicidades! Terminaste todas tus tareas"
+box.style.position="fixed"
+box.style.top="20px"
+box.style.left="50%"
+box.style.transform="translateX(-50%)"
+box.style.background="#f2c94c"
+box.style.padding="15px 25px"
+box.style.borderRadius="10px"
+box.style.fontWeight="bold"
+box.style.zIndex="999"
+
+document.body.appendChild(box)
+
+setTimeout(()=>box.remove(),4000)
 }
-}
 
-function allowDrop(ev){ev.preventDefault()}
-
-function drag(ev,index){ev.dataTransfer.setData("taskIndex",index)}
-
-function highlight(ev){ev.currentTarget.classList.add("drag-over")}
-function unhighlight(ev){ev.currentTarget.classList.remove("drag-over")}
-
-function drop(ev,status){
-ev.preventDefault()
-const index=ev.dataTransfer.getData("taskIndex")
-tasks[index].status=status
-save()
-renderTasks()
+function checkAllCompleted(){
+if(tasks.length===0)return
+if(tasks.every(t=>t.status==="done"))showCongrats()
 }
 
 function renderTasks(){
-const search=document.getElementById("search").value.toLowerCase()
-const sort=document.getElementById("sort").value
-
 const pending=document.getElementById("pending")
 const progress=document.getElementById("progress")
 const done=document.getElementById("done")
@@ -353,61 +168,63 @@ pending.innerHTML=""
 progress.innerHTML=""
 done.innerHTML=""
 
+let cPending=0,cProgress=0,cDone=0
+
+const search=document.getElementById("search").value.toLowerCase()
 let arr=[...tasks]
 
-if(search){
-arr=arr.filter(t=>t.title.toLowerCase().includes(search)||t.desc.toLowerCase().includes(search)||t.tags.toLowerCase().includes(search))
-}
+if(search){arr=arr.filter(t=>t.title.toLowerCase().includes(search)||t.desc.toLowerCase().includes(search))}
 
-if(sort==="date")arr.sort((a,b)=>new Date(a.date)-new Date(b.date))
-
-if(sort==="priority"){
-const o={high:1,medium:2,low:3}
-arr.sort((a,b)=>o[a.priority]-o[b.priority])
-}
-
-if(sort==="title")arr.sort((a,b)=>a.title.localeCompare(b.title))
-
-let cPending=0
-let cProgress=0
-let cDone=0
-
-arr.forEach(task=>{
-const i=tasks.indexOf(task)
+arr.forEach((task,i)=>{
 const div=document.createElement("div")
 
 div.className="task-item priority-"+task.priority
 
-div.draggable=true
+div.dataset.index=i
 
-div.ondragstart=(e)=>drag(e,i)
 
-div.innerHTML=`
-<span>
-<b>${task.title}</b><br>
-${task.date} | ${task.priority}<br>
-${task.desc}
-</span>
-<div>
-<button onclick="deleteTask(${i})">X</button>
-</div>
-`
+div.innerHTML=`<span><b>${task.title}</b><br>${task.date}<br>${task.desc}</span><button onclick="deleteTask(${i})">X</button>`
 
 if(task.status==="pending"){pending.appendChild(div);cPending++}
 else if(task.status==="inprogress"){progress.appendChild(div);cProgress++}
 else{done.appendChild(div);cDone++}
 })
 
-
 document.getElementById("count-pending").textContent=cPending+" tareas"
 document.getElementById("count-progress").textContent=cProgress+" tareas"
 document.getElementById("count-done").textContent=cDone+" tareas"
 
 updateProgress()
+checkAllCompleted()
 }
 
-renderTasks()
-</script>
+function initDrag(){
 
+new Sortable(document.getElementById("pending"),{
+ group:"tasks",
+ animation:150,
+ onEnd:(evt)=>{tasks[evt.item.dataset.index].status="pending";save();renderTasks()}
+})
+
+new Sortable(document.getElementById("progress"),{
+ group:"tasks",
+ animation:150,
+ onEnd:(evt)=>{tasks[evt.item.dataset.index].status="inprogress";save();renderTasks()}
+})
+
+new Sortable(document.getElementById("done"),{
+ group:"tasks",
+ animation:150,
+ onEnd:(evt)=>{tasks[evt.item.dataset.index].status="done";save();renderTasks()}
+})
+
+}
+
+window.onload=()=>{
+renderTasks()
+initDrag()
+}
+
+</script>
 </body>
 </html>
