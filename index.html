@@ -2,262 +2,435 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OrganizaT</title>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<title>Entrenamiento Jedi Pro</title>
 <style>
-:root{
---azul:#0b2a5b;
---amarillo:#f2c94c;
---amarilloSuave:#fff4cc;
---fondo:#f4f6fb;
+body {
+  margin: 0;
+  background: black;
+  color: #ffe81f;
+  text-align: center;
+  overflow: hidden;
+  font-family: 'Arial Black', sans-serif;
 }
-body{font-family:Arial;margin:0;padding:20px;background:var(--fondo);color:#222;transition:.3s}
-header{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px}
-#tutorial-btn{display:block;margin:0 auto 10px auto} 
-.logo{width:34px;height:34px}
-h1{margin:0;color:var(--azul)}
-button{padding:6px 10px;border:none;border-radius:5px;background:var(--azul);color:white;cursor:pointer}
-button:hover{opacity:.85}
-input,select{padding:6px;border-radius:5px;border:1px solid #ccc}
-#tutorial-box{max-width:900px;margin:10px auto 20px auto;background:#fff;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-.hidden{display:none}
-#progress-container{max-width:600px;margin:10px auto;background:#ddd;border-radius:20px;overflow:hidden}
-#progress-bar{height:20px;width:0;background:var(--amarillo);text-align:center;font-size:12px;font-weight:bold}
-#task-form,#search-sort{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:15px}
-#board{display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
-.column{background:white;padding:15px;border-radius:10px;width:280px;min-height:250px;box-shadow:0 2px 6px rgba(0,0,0,.2);border-top:6px solid var(--amarillo)}
-.column h3{text-align:center;margin-bottom:3px;color:var(--azul)}
-.counter{text-align:center;font-size:13px;margin-bottom:10px;color:#555}
-.task-item{background:var(--amarilloSuave);padding:8px;margin-bottom:8px;border-left:6px solid var(--azul);border-radius:5px;display:flex;justify-content:space-between;align-items:center;cursor:grab}
-.priority-high{border-color:#e74c3c}
-.priority-medium{border-color:#f1c40f}
-.priority-low{border-color:#2ecc71}
-.dark{background:#0b1a33;color:white}
-.dark h1{color:var(--amarillo)}
-.dark .column{background:#162447}
-.dark .column h3{color:var(--amarillo)}
-.dark .task-item{background:#1f2f57}
-.dark button{background:var(--amarillo);color:#000}
-.dark #tutorial-box{background:#162447;color:white}
-.dark #progress-bar{color:#000;font-weight:bold}
-.dark .logo{filter:brightness(0) invert(1);}
+
+h2 {
+  font-size: 40px;
+  letter-spacing: 3px;
+  text-shadow:
+    0 0 10px #ffe81f,
+    0 0 20px #ffe81f,
+    0 0 40px #ffcc00;
+}
+
+button {
+  font-family: 'Arial Black', sans-serif;
+  background: black;
+  color: #ffe81f;
+  border: 2px solid #ffe81f;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  text-shadow: 0 0 10px #ffe81f;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+#game-area {
+  position: relative;
+  width: 320px;
+  height: 500px;
+  margin: auto;
+  margin-top: 20px;
+}
+
+#enemy {
+  position: absolute;
+  top: 10px;
+  left: 120px;
+  width: 80px;
+  height: 70px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 15px white;
+}
+
+#enemy::before {
+  content: "";
+  position: absolute;
+  top: 25px;
+  left: 10px;
+  width: 60px;
+  height: 12px;
+  background: black;
+  border-radius: 10px;
+}
+
+#enemy::after {
+  content: "";
+  position: absolute;
+  top: 45px;
+  left: 20px;
+  width: 40px;
+  height: 10px;
+  background: black;
+  border-radius: 10px;
+}
+
+#enemy span {
+  position: absolute;
+  top: 28px;
+  width: 10px;
+  height: 10px;
+  background: black;
+  border-radius: 50%;
+}
+
+#eye1 { left: 18px; }
+#eye2 { right: 18px; }
+
+.laser {
+  position: absolute;
+  width: 6px;
+  height: 30px;
+  background: red;
+  box-shadow: 0 0 15px red, 0 0 30px red;
+}
+
+#player {
+  position: absolute;
+  bottom: 30px;
+  width: 120px;
+  height: 12px;
+  left: 100px;
+  display: flex;
+}
+
+#handle {
+  width: 25px;
+  background: linear-gradient(#666, #222);
+  border: 1px solid #aaa;
+}
+
+#blade {
+  flex: 1;
+  background: linear-gradient(to right, #aef, #0ff);
+  box-shadow:
+    0 0 10px #0ff,
+    0 0 20px #0ff,
+    0 0 40px #0ff,
+    0 0 80px #0ff;
+  border-radius: 4px;
+}
+
+#life-bar {
+  width: 220px;
+  height: 18px;
+  border: 2px solid cyan;
+  margin: auto;
+  box-shadow: 0 0 10px cyan;
+}
+
+#life {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to right, cyan, blue);
+}
+
+#yoda {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: #90ff90;
+  font-size: 24px;
+  text-shadow: 0 0 10px lime;
+  max-width: 250px;
+}
 </style>
 </head>
 <body>
-<header>
-<img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" class="logo">
-<h1>OrganizaT</h1>
-</header>
+<canvas id="stars"></canvas>
 
-<button id="tutorial-btn" onclick="toggleTutorial()">Mostrar / Ocultar tutorial</button>
-
-<div id="tutorial-box" class="hidden">
-<b>Mini tutorial:</b>
-<p>1. Agrega tareas con título y fecha.</p>
-<p>2. Arrastra tareas entre columnas.</p>
-<p>3. Usa búsqueda y ordenamiento.</p>
-<p>4. Observa la barra de progreso.</p>
-<p>5. Cuando todas estén completadas recibirás una felicitación.</p>
+<h2>Entrenamiento Jedi</h2>
+<div id="game-area">
+  <div id="enemy">
+    <span id="eye1"></span>
+    <span id="eye2"></span>
+  </div>
+  <div id="player">
+    <div id="handle"></div>
+    <div id="blade"></div>
+  </div>
 </div>
-
-<div id="progress-container">
-<div id="progress-bar">0%</div>
-</div>
-
-<div id="task-form">
-<input id="task-title" placeholder="Título">
-<input type="date" id="task-date">
-<select id="task-priority">
-<option value="high">Alta</option>
-<option value="medium">Media</option>
-<option value="low">Baja</option>
-</select>
-<input id="task-desc" placeholder="Descripción">
-<button onclick="addTask()">Agregar</button>
-</div>
-
-<div id="search-sort">
-<input id="search" placeholder="Buscar" oninput="renderTasks()">
-<select id="sort" onchange="renderTasks()">
-<option value="date">Fecha</option>
-<option value="priority">Prioridad</option>
-<option value="title">Nombre</option>
-</select>
-<button onclick="toggleTheme()">Modo oscuro / claro</button>
-</div>
-
-<div id="board">
-<div class="column">
-<h3>Pendientes</h3>
-<div class="counter" id="count-pending"></div>
-<div id="pending"></div>
-</div>
-
-<div class="column">
-<h3>En progreso</h3>
-<div class="counter" id="count-progress"></div>
-<div id="progress"></div>
-</div>
-
-<div class="column">
-<h3>Completadas</h3>
-<div class="counter" id="count-done"></div>
-<div id="done"></div>
-</div>
-</div>
+<div id="life-bar"><div id="life"></div></div>
+<p>Puntos: <span id="score">0</span></p>
+<p>Récord: <span id="record">0</span></p>
+<button onclick="startGame()">Iniciar</button>
+<div id="yoda">“Concéntrate debes…”</div>
 
 <script>
-let tasks = JSON.parse(localStorage.getItem("tasks")) || []
+// ⭐ ESTRELLAS
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-function save(){localStorage.setItem("tasks",JSON.stringify(tasks))}
-
-function toggleTheme(){document.body.classList.toggle("dark")}
-
-function toggleTutorial(){document.getElementById("tutorial-box").classList.toggle("hidden")}
-
-function addTask(){
-const title=document.getElementById("task-title").value
-const date=document.getElementById("task-date").value
-const priority=document.getElementById("task-priority").value
-const desc=document.getElementById("task-desc").value
-
-if(!title||!date){alert("Pon título y fecha");return}
-
-tasks.push({title,date,priority,desc,status:"pending"})
-
-save()
-renderTasks()
+let stars = [];
+for (let i = 0; i < 500; i++) {
+  stars.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    speed: Math.random()*0.7 + 0.2,
+    size: Math.random()*2
+  });
 }
 
-function deleteTask(i){tasks.splice(i,1);save();renderTasks()}
+function drawStars(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  stars.forEach(s=>{
+    ctx.fillStyle="white";
+    ctx.fillRect(s.x,s.y,s.size,s.size);
+    s.y+=s.speed;
+    if(s.y>canvas.height) s.y=0;
+  });
+  requestAnimationFrame(drawStars);
+}
+drawStars();
 
-function moveTask(i,status){
- tasks[i].status=status
- save()
- renderTasks()
+// 🎮 VARIABLES
+let player = document.getElementById("player");
+let blade = document.getElementById("blade");
+let scoreEl = document.getElementById("score");
+let recordEl = document.getElementById("record");
+let lifeEl = document.getElementById("life");
+let yoda = document.getElementById("yoda");
+
+let lasers=[];
+let score=0;
+let lives=100;
+let speed=2;
+let spawnRate=1800;
+let running=false;
+
+// 🔊 SONIDOS
+let shootSound = new Audio("https://www.soundjay.com/mechanical/sounds/laser-01.mp3");
+let blockSound = new Audio("https://www.soundjay.com/button/sounds/button-16.mp3");
+let clashSound = new Audio("https://www.soundjay.com/mechanical/sounds/metal-clang-01.mp3");
+
+// 🎵 MUSICA
+let bgMusic = new Audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3");
+bgMusic.loop = true;
+bgMusic.volume = 0.3;
+
+// 🧙‍♂️ VOZ
+function speakYoda(text){
+  let msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "es-ES";
+  msg.pitch = 0.3;
+  msg.rate = 0.7;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(msg);
 }
 
-function updateProgress(){
-const total=tasks.length
-const done=tasks.filter(t=>t.status==="done").length
-const percent=total?Math.round(done/total*100):0
-const bar=document.getElementById("progress-bar")
-bar.style.width=percent+"%"
-bar.textContent=percent+"% completado"
+let lastPhrase = "";
+
+// 🧠 YODA INTELIGENTE
+let yodaActivo = true;
+
+function yodaEvento(tipo){
+  if(!yodaActivo) return;
+  let frases = {
+    inicio: ["Comienza tu entrenamiento, joven padawan","Listo estás, empieza debes"],
+    daño: ["Cuidado debes tener","El dolor sentirás","Concéntrate más debes"],
+    record: ["Superado tu límite has","Orgulloso estoy de ti"],
+    muerte: ["Derrotado has sido","Mucho que aprender aún tienes","El final no es, volver puedes"]
+  };
+  let lista = frases[tipo];
+  if(!lista) return;
+  let frase;
+  do {
+    frase = lista[Math.floor(Math.random()*lista.length)];
+  } while(frase === lastPhrase);
+  lastPhrase = frase;
+  yoda.textContent = frase;
+  speakYoda(frase);
 }
 
-function showCongrats(){
-const box=document.createElement("div")
-box.innerHTML="🎉 ¡Felicidades! Terminaste todas tus tareas"
-box.style.position="fixed"
-box.style.top="20px"
-box.style.left="50%"
-box.style.transform="translateX(-50%)"
-box.style.background="#f2c94c"
-box.style.padding="15px 25px"
-box.style.borderRadius="10px"
-box.style.fontWeight="bold"
-box.style.zIndex="999"
-
-document.body.appendChild(box)
-
-setTimeout(()=>box.remove(),4000)
+// 🎬 GAME OVER
+let gameOverShown = false;
+function gameOverAnim(){
+  if(gameOverShown) return;
+  gameOverShown = true;
+  let over = document.createElement("div");
+  over.style.position = "fixed";
+  over.style.top = "50%";
+  over.style.left = "50%";
+  over.style.transform = "translate(-50%, -50%) scale(0)";
+  over.style.color = "red";
+  over.style.fontSize = "60px";
+  over.style.textShadow = "0 0 20px red, 0 0 40px darkred";
+  over.style.transition = "all 0.5s ease";
+  over.textContent = "GAME OVER";
+  document.body.appendChild(over);
+  setTimeout(()=>{ over.style.transform = "translate(-50%, -50%) scale(1)"; },50);
 }
 
-function checkAllCompleted(){
-if(tasks.length===0)return
-if(tasks.every(t=>t.status==="done"))showCongrats()
+// ✨ EFECTO VISUAL
+function effect(x,y){
+  let e = document.createElement("div");
+  e.style.position="absolute";
+  e.style.left=x+"px";
+  e.style.top=y+"px";
+  e.style.width="10px";
+  e.style.height="10px";
+  e.style.background="cyan";
+  e.style.boxShadow="0 0 20px cyan";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),200);
 }
 
-function renderTasks(){
-const pending=document.getElementById("pending")
-const progress=document.getElementById("progress")
-const done=document.getElementById("done")
-
-pending.innerHTML=""
-progress.innerHTML=""
-done.innerHTML=""
-
-let cPending=0,cProgress=0,cDone=0
-
-const search=document.getElementById("search").value.toLowerCase()
-let arr=[...tasks]
-
-if(search){arr=arr.filter(t=>t.title.toLowerCase().includes(search)||t.desc.toLowerCase().includes(search))}
-
-arr.forEach((task,i)=>{
-const div=document.createElement("div")
-
-div.className="task-item priority-"+task.priority
-
-div.dataset.index=i
-
-
-const today=new Date();
-const due=new Date(task.date);
-const diff=Math.ceil((due-today)/(1000*60*60*24));
-
-let aviso="";
-if(diff===0){aviso="<br><span style='color:red;font-weight:bold'>⚠ Vence hoy</span>"}
-else if(diff===1){aviso="<br><span style='color:orange;font-weight:bold'>⏰ Vence mañana</span>"}
-
-div.innerHTML=`<span><b>${task.title}</b><br>${task.date}<br>${task.desc}${aviso}</span>
-<div style="display:flex;gap:4px;">
-<button onclick="moveTask(${i},'pending')">P</button>
-<button onclick="moveTask(${i},'inprogress')">→</button>
-<button onclick="moveTask(${i},'done')">✓</button>
-<button onclick="deleteTask(${i})">X</button>
-</div>`
-
-if(task.status==="pending"){pending.appendChild(div);cPending++}
-else if(task.status==="inprogress"){progress.appendChild(div);cProgress++}
-else{done.appendChild(div);cDone++}
-})
-
-document.getElementById("count-pending").textContent=cPending+" tareas"
-document.getElementById("count-progress").textContent=cProgress+" tareas"
-document.getElementById("count-done").textContent=cDone+" tareas"
-
-updateProgress()
-checkAllCompleted()
+// ⚔️ CAMBIO DE SABLE
+function updateBlade(){
+  let colors=["#0ff","#0f0","#f00","#ff0","#f0f"];
+  let c=colors[Math.floor(Math.random()*colors.length)];
+  blade.style.background=c;
+  blade.style.boxShadow=`0 0 20px ${c},0 0 40px ${c}`;
 }
 
-function initDrag(){
-
-new Sortable(document.getElementById("pending"),{
- group:"tasks",
- animation:150,
- filter:"button",
- preventOnFilter:false,
- onEnd:(evt)=>{tasks[evt.item.dataset.index].status="pending";save();renderTasks()}
-})
-
-new Sortable(document.getElementById("progress"),{
- group:"tasks",
- animation:150,
- filter:"button",
- preventOnFilter:false,
- onEnd:(evt)=>{tasks[evt.item.dataset.index].status="inprogress";save();renderTasks()}
-})
-
-new Sortable(document.getElementById("done"),{
- group:"tasks",
- animation:150,
- filter:"button",
- preventOnFilter:false,
- onEnd:(evt)=>{tasks[evt.item.dataset.index].status="done";save();renderTasks()}
-})
-
+// 🌟 CREAR LÁSER
+function createLaser(){
+  let el = document.createElement("div");
+  el.className = "laser";
+  let gameWidth = document.getElementById("game-area").offsetWidth;
+  let x = Math.random() * (gameWidth - 10);
+  el.style.left = x + "px";
+  el.style.top = "0px";
+  el.style.position = "absolute";
+  el.style.display = "block";
+  document.getElementById("game-area").appendChild(el);
+  lasers.push({el: el, x: x, y: 0});
+  shootSound.currentTime = 0;
+  shootSound.play();
 }
 
-window.onload=()=>{
-renderTasks()
-initDrag()
+// LOOP
+function update(time){
+  if(!running) return;
+
+  lasers.forEach((l,i)=>{
+    l.y+=speed;
+    l.el.style.top=l.y+"px";
+
+    let p=player.getBoundingClientRect();  
+    let r=l.el.getBoundingClientRect();  
+
+    if(l.y>420 && r.left<p.right && r.right>p.left){  
+      score++;  
+      scoreEl.textContent=score;  
+
+      effect(l.x,420);  
+
+      clashSound.currentTime=0;  
+      clashSound.play();  
+
+      blockSound.currentTime=0;  
+      blockSound.play();  
+
+      updateBlade();  
+
+      // Animación de rebote
+      let bounceStep = 5;
+      let bounceCount = 0;
+      let bounceInterval = setInterval(()=>{
+        l.y -= bounceStep;
+        l.el.style.top = l.y + "px";
+        bounceCount++;
+        if(bounceCount >= 5){
+          clearInterval(bounceInterval);
+          l.el.remove();
+        }
+      },20);
+
+      let record=localStorage.getItem("record")||0;  
+      if(score>record){  
+        localStorage.setItem("record",score);  
+        yodaEvento("record");  
+      }  
+
+      lasers.splice(i,1);
+    }
+    else if(l.y>500){  
+      lives-=10;  
+      lifeEl.style.width=lives+"%";  
+
+      yodaEvento("daño");  
+
+      l.el.remove();  
+      lasers.splice(i,1);  
+
+      if(lives<=0){  
+        running=false;  
+        bgMusic.pause();  
+
+        yodaEvento("muerte");  
+        yodaActivo=false;  
+        gameOverAnim();  
+      }  
+    }
+  });
+
+  if(time%7000<20){
+    speed+=0.2;
+    spawnRate*=0.92;
+  }
+
+  requestAnimationFrame(update);
 }
 
+// SPAWN
+function spawn(){
+  if(!running) return;
+  createLaser();
+  setTimeout(spawn,spawnRate);
+}
+
+// START
+function startGame(){
+  score=0;
+  lives=100;
+  speed=2;
+  spawnRate=1800;
+  running=true;
+  gameOverShown = false;
+
+  scoreEl.textContent=0;
+  lifeEl.style.width="100%";
+  recordEl.textContent=localStorage.getItem("record")||0;
+
+  lasers.forEach(l=>l.el.remove());
+  lasers=[];
+
+  bgMusic.currentTime=0;
+  bgMusic.play();
+
+  yodaActivo=true;
+  yodaEvento("inicio");
+
+  spawn();
+  requestAnimationFrame(update);
+}
+
+// MOVIMIENTO
+document.addEventListener("mousemove", e=>{
+  if(!running) return;
+  let rect=document.getElementById("game-area").getBoundingClientRect();
+  let x=e.clientX-rect.left;
+  player.style.left=(x-60)+"px";
+});
 </script>
 </body>
 </html>
-
-
