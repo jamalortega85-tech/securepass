@@ -1,18 +1,17 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
+<head>    
+<meta charset="UTF-8">    
 <title>Entrenamiento Jedi Pro</title>
-<style>
-body {
-  margin: 0;
-  background: black;
-  color: #ffe81f;
-  text-align: center;
-  overflow: hidden;
-  font-family: 'Arial Black', sans-serif;
-}
-
+<style>    
+body {    
+  margin: 0;    
+  background: black;    
+  color: #ffe81f;    
+  text-align: center;    
+  overflow: hidden;    
+  font-family: 'Arial Black', sans-serif;    
+}    
 h2 {
   font-size: 40px;
   letter-spacing: 3px;
@@ -156,15 +155,15 @@ canvas {
 <canvas id="stars"></canvas>
 
 <h2>Entrenamiento Jedi</h2>
-<div id="game-area">
-  <div id="enemy">
-    <span id="eye1"></span>
-    <span id="eye2"></span>
-  </div>
-  <div id="player">
-    <div id="handle"></div>
-    <div id="blade"></div>
-  </div>
+<div id="game-area">    
+  <div id="enemy">    
+    <span id="eye1"></span>    
+    <span id="eye2"></span>    
+  </div>    
+  <div id="player">    
+    <div id="handle"></div>    
+    <div id="blade"></div>    
+  </div>    
 </div>
 <div id="life-bar"><div id="life"></div></div>
 <p>Puntos: <span id="score">0</span></p>
@@ -173,9 +172,9 @@ canvas {
 <div id="yoda">“Concéntrate debes…”</div>
 
 <script>
-// ⭐ ESTRELLAS
-const canvas = document.getElementById("stars");
-const ctx = canvas.getContext("2d");
+// ⭐ ESTRELLAS    
+const canvas = document.getElementById("stars");    
+const ctx = canvas.getContext("2d");    
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -301,7 +300,7 @@ function updateBlade(){
   blade.style.boxShadow=`0 0 20px ${c},0 0 40px ${c}`;
 }
 
-// 🌟 CREAR LÁSER
+// 🌟 CREAR LÁSER CORRECTAMENTE
 function createLaser(){
   let el = document.createElement("div");
   el.className = "laser";
@@ -320,29 +319,23 @@ function createLaser(){
 // LOOP
 function update(time){
   if(!running) return;
-
   lasers.forEach((l,i)=>{
     l.y+=speed;
     l.el.style.top=l.y+"px";
+    let p=player.getBoundingClientRect();
+    let r=l.el.getBoundingClientRect();
+    if(l.y>420 && r.left<p.right && r.right>p.left){
+      score++;
+      scoreEl.textContent=score;
+      effect(l.x,420);
+      clashSound.currentTime=0;
+      clashSound.play();
+      blockSound.currentTime=0;
+      blockSound.play();
+      updateBlade();
 
-    let p=player.getBoundingClientRect();  
-    let r=l.el.getBoundingClientRect();  
-
-    if(l.y>420 && r.left<p.right && r.right>p.left){  
-      score++;  
-      scoreEl.textContent=score;  
-
-      effect(l.x,420);  
-
-      clashSound.currentTime=0;  
-      clashSound.play();  
-
-      blockSound.currentTime=0;  
-      blockSound.play();  
-
-      updateBlade();  
-
-      // Animación de rebote
+      // Animación simple de rebote
+      let bounceY = l.y;
       let bounceStep = 5;
       let bounceCount = 0;
       let bounceInterval = setInterval(()=>{
@@ -353,41 +346,33 @@ function update(time){
           clearInterval(bounceInterval);
           l.el.remove();
         }
-      },20);
+      }, 20);
 
-      let record=localStorage.getItem("record")||0;  
-      if(score>record){  
-        localStorage.setItem("record",score);  
-        yodaEvento("record");  
-      }  
-
+      let record=localStorage.getItem("record")||0;
+      if(score>record){
+        localStorage.setItem("record",score);
+        yodaEvento("record");
+      }
       lasers.splice(i,1);
-    }
-    else if(l.y>500){  
-      lives-=10;  
-      lifeEl.style.width=lives+"%";  
-
-      yodaEvento("daño");  
-
-      l.el.remove();  
-      lasers.splice(i,1);  
-
-      if(lives<=0){  
-        running=false;  
-        bgMusic.pause();  
-
-        yodaEvento("muerte");  
-        yodaActivo=false;  
-        gameOverAnim();  
-      }  
+    } else if(l.y>500){
+      lives-=10;
+      lifeEl.style.width=lives+"%";
+      yodaEvento("daño");
+      l.el.remove();
+      lasers.splice(i,1);
+      if(lives<=0){
+        running=false;
+        bgMusic.pause();
+        yodaEvento("muerte");
+        yodaActivo=false;
+        gameOverAnim();
+      }
     }
   });
-
   if(time%7000<20){
     speed+=0.2;
     spawnRate*=0.92;
   }
-
   requestAnimationFrame(update);
 }
 
@@ -406,31 +391,37 @@ function startGame(){
   spawnRate=1800;
   running=true;
   gameOverShown = false;
-
   scoreEl.textContent=0;
   lifeEl.style.width="100%";
   recordEl.textContent=localStorage.getItem("record")||0;
-
   lasers.forEach(l=>l.el.remove());
   lasers=[];
-
   bgMusic.currentTime=0;
   bgMusic.play();
-
   yodaActivo=true;
   yodaEvento("inicio");
-
   spawn();
   requestAnimationFrame(update);
 }
 
-// MOVIMIENTO
-document.addEventListener("mousemove", e=>{
-  if(!running) return;
-  let rect=document.getElementById("game-area").getBoundingClientRect();
-  let x=e.clientX-rect.left;
-  player.style.left=(x-60)+"px";
-});
+// MOVIMIENTO PC Y MÓVIL
+function movePlayer(x) {
+  let rect = document.getElementById("game-area").getBoundingClientRect();
+  player.style.left = (x - 60) + "px";
+}
+
+if ('ontouchstart' in window) {
+  document.addEventListener("touchmove", e => {
+    if(!running) return;
+    movePlayer(e.touches[0].clientX);
+    e.preventDefault();
+  }, {passive:false});
+} else {
+  document.addEventListener("mousemove", e => {
+    if(!running) return;
+    movePlayer(e.clientX);
+  });
+}
 </script>
 </body>
 </html>
